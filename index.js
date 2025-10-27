@@ -1,9 +1,13 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require('./swaggerOption');
+
 
 const app = express();
 app.use(express.json());
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 const userRoutes = require("./routes/user.routes.js");
 const productRoutes = require("./routes/product.routes.js");
