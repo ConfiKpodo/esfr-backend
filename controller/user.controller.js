@@ -52,15 +52,27 @@ exports.getUserById = async (req, res) => {
 // ✅ Get user by username
 exports.getUserByUsername = async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.params.username }).select(
-      "-password"
-    );
-    if (!user) return res.status(404).json({ message: "User not found" });
+    const { username } = req.params;
+
+    if (!username) {
+      return res.status(400).json({ message: "Username parameter is required" });
+    }
+
+    const user = await User.findOne({
+      username: { $regex: `^${username}$`, $options: "i" }, // case-insensitive exact match
+    }).select("-password -__v");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error fetching user:", error.message);
+    res.status(500).json({ error: "Server error, please try again later" });
   }
 };
+
 
 // ✅ Update user by ID
 exports.updateUser = async (req, res) => {

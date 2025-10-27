@@ -10,6 +10,7 @@ const {
   findProductByNameOrLocation,
   findProductsByUsername,
   findProductsByCategory,
+  findProductsByName
 } = require("../controller/product.controller.js");
 
 const router = express.Router();
@@ -23,5 +24,6 @@ router.get("/category/:category", findProductsByCategory);
 router.get("/:id", getProductById);
 router.put("/updateProduct/:id",authenticate, updateProduct);
 router.delete("/deleteProduct/:id",authenticate, deleteProduct);
+router.get("/name/:name", findProductsByName);
 
 module.exports = router;
