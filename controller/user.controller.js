@@ -138,7 +138,7 @@ exports.loginUser = async (req, res) => {
     const userObj = user.toObject();
     delete userObj.password;
     
-    res.json({ token, user: userObj.username, email: userObj.email ,name: userObj.name});
+    res.json({ token, user: userObj.username, email: userObj.email ,name: userObj.name,id: userObj._id});
 
   } catch (error) {
     res.status(500).json({ error: error.message });

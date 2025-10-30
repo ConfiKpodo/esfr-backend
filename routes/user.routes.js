@@ -23,7 +23,7 @@ router.post("/register", createUser);
 router.get("/allUsers", getUsers);
 router.get("/:id", authenticate,getUserById);
 router.put("/updateUser/:id",authenticate, updateUser);
-router.delete("/:id",authenticate, deleteUser);
+router.delete("/delete/:id",authenticate, deleteUser);
 router.post("/login", loginUser);
 router.post("/forgotPassword", forgotPassword);
 router.post("/resetPasswordWithToken/:token", resetPasswordWithToken);
