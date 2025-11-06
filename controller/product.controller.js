@@ -57,31 +57,27 @@ exports.deleteProduct = async (req, res) => {
 // ✅ Find by location
 exports.findProductsByLocation = async (req, res) => {
   try {
-    const { location } = req.query;
+    const location = req.params.location;
 
     if (!location) {
-      return res.status(400).json({
-        message: "Please provide a location to search.",
-      });
+      return res.status(400).json({ message: "Location parameter required" });
     }
 
-    // Case-insensitive regex match for partial or full location name
     const products = await Product.find({
-      location: { $regex: new RegExp(location, 'i') },
+      location: { $regex: new RegExp(location, "i") }, // case-insensitive
     });
 
-    if (!products || products.length === 0) {
-      return res.status(404).json({
-        message: `No products found for location: ${location}`,
-      });
+    if (products.length === 0) {
+      return res.status(404).json({ message: "No products found for this location" });
     }
 
     res.status(200).json(products);
   } catch (error) {
-    console.error("Error fetching products by location:", error);
-    res.status(500).json({ error: error.message });
+    console.error("Error finding products by location:", error);
+    res.status(500).json({ message: "Server error", error });
   }
 };
+
 
 
 // ✅ Find by name or location (query params)
