@@ -23,7 +23,7 @@ exports.authenticate = async (req, res, next) => {
     }
 
     req.user = user;
-    req.user = decoded
+    
     next();
   } catch (error) {
     console.error("Authentication error:", error.message);
