@@ -17,41 +17,43 @@ const productSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    condition: {
+      type: String,
+      required: true,
+      enum: ["New", "Used", "Refurbished"],
+    },
     location: {
       type: String,
       required: true,
       trim: true,
     },
-
-    // 🔥 Multiple image URLs
+    postalCode: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     images: {
-      type: [String], // array of image URLs or file paths
+      type: [String],
       validate: {
-        validator: function (arr) {
-          return arr.length > 0; // require at least one image
-        },
+        validator: (arr) => arr.length > 0,
         message: "At least one image is required",
       },
       required: true,
     },
-
     category: {
       type: String,
       required: true,
       trim: true,
     },
 
-    username: {
-      type: String,
+    // ✅ RELATION TO USER
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
-      trim: true,
     },
   },
-  {
-    timestamps: true, // adds createdAt and updatedAt
-  }
+  { timestamps: true }
 );
 
-const Product = mongoose.model("Product", productSchema);
-
-module.exports = Product;
+module.exports = mongoose.model("Product", productSchema);

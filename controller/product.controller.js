@@ -3,29 +3,49 @@ const Product = require("../models/product.model");
 // ✅ Create product
 exports.createProduct = async (req, res) => {
   try {
-    const product = new Product(req.body);
-    const savedProduct = await product.save();
+    const productData = req.body;
+
+    // ✅ Attach logged-in user automatically
+    productData.user = req.user._id;
+
+    if (req.files?.length > 0) {
+      productData.images = req.files.map(
+        file => `/uploads/images/${file.filename}`
+      );
+    }
+
+    const savedProduct = await Product.create(productData);
+
     res.status(201).json(savedProduct);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
+
+
 // ✅ Get all products
 exports.getProducts = async (req, res) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find()
+      .populate("user", "username phone email");
+
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
+
 // ✅ Get product by ID
 exports.getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
-    if (!product) return res.status(404).json({ message: "Product not found" });
+    const product = await Product.findById(req.params.id)
+      .populate("user", "username phone email");
+
+    if (!product)
+      return res.status(404).json({ message: "Product not found" });
+
     res.status(200).json(product);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -35,13 +55,29 @@ exports.getProductById = async (req, res) => {
 // ✅ Update product
 exports.updateProduct = async (req, res) => {
   try {
-    const updated = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!updated) return res.status(404).json({ message: "Product not found" });
+    const updatedData = req.body;
+
+    // If a new file is uploaded, save the new image path
+    if (req.file) {
+      updatedData.image = `/uploads/images/${req.file.filename}`;
+    }
+
+    const updated = await Product.findByIdAndUpdate(
+      req.params.id,
+      updatedData,
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
     res.status(200).json(updated);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
+
 
 // ✅ Delete product
 exports.deleteProduct = async (req, res) => {
@@ -119,25 +155,18 @@ exports.findProductByNameOrLocation = async (req, res) => {
 
 
 // ✅ Find by username
-exports.findProductsByUsername = async (req, res) => {
+exports.findProductsByUserId = async (req, res) => {
   try {
-    const { username } = req.params;
+    const { userId } = req.params;
 
-    if (!username) {
-      return res.status(400).json({ message: "Username parameter is required" });
-    }
+    const products = await Product.find({ user: userId });
 
-    const products = await Product.find({
-      username: { $regex: `^${username}$`, $options: "i" }, // case-insensitive exact match
-    });
-
-    if (products.length === 0) {
-      return res.status(404).json({ message: "No products found for this username" });
+    if (!products.length) {
+      return res.status(404).json({ message: "No products found" });
     }
 
     res.status(200).json(products);
   } catch (error) {
-    console.error("Error fetching products by username:", error.message);
     res.status(500).json({ error: error.message });
   }
 };
