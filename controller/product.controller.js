@@ -155,12 +155,14 @@ exports.findProductByNameOrLocation = async (req, res) => {
 };
 
 
-// ✅ Find by username
+// ✅ Find by userid
+const mongoose = require("mongoose");
+
 exports.findProductsByUserId = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { id } = req.params;
 
-    const products = await Product.find({ user: userId });
+    const products = await Product.find({ user: id });
 
     if (!products.length) {
       return res.status(404).json({ message: "No products found" });
@@ -171,6 +173,7 @@ exports.findProductsByUserId = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 
 
 //find product by name
