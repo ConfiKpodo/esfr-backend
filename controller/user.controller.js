@@ -16,17 +16,27 @@ exports.createUser = async (req, res) => {
       return res.status(400).json({ message: "Email or Username already in use" });
     }
 
-    // Just create the user — password will be hashed automatically by the pre-save hook
+    // Remove paymentHistory if client tries to send it
+    delete req.body.paymentHistory;
+
+    // If uploading a profile image
+    if (req.file) {
+      req.body.profileImage = `/uploads/users/${req.file.filename}`;
+    }
+
     const user = new User(req.body);
     const savedUser = await user.save();
 
     const userObj = savedUser.toObject();
-    delete userObj.password; // remove password before sending back
+    delete userObj.password;
+
     res.status(201).json(userObj);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
+
+
 
 // ✅ Get all users
 exports.getUsers = async (req, res) => {

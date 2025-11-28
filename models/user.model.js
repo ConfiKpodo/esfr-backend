@@ -52,13 +52,13 @@ const userSchema = new mongoose.Schema(
     default: 'user',
   },
   paymentHistory: [
-    {
-      item: { type: String, required: true },
-      amount: { type: Number, default: 0 },
-      date: { type: Date, default: Date.now },
-      method: { type: String,  }, // e.g., 'credit card', 'paypal'
-    },
-  ],
+  {
+    item: { type: String },
+    amount: { type: Number, default: 0 },
+    date: { type: Date, default: Date.now },
+    method: { type: String }
+  }
+],
   },    
   {
     timestamps: true, // adds createdAt and updatedAt
