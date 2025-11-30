@@ -20,9 +20,10 @@ exports.createUser = async (req, res) => {
     delete req.body.paymentHistory;
 
     // If uploading a profile image
-    if (req.file) {
-      req.body.profileImage = `/uploads/users/${req.file.filename}`;
-    }
+    if (req.savedFilename) {
+  req.body.profileImage = `/uploads/users/${req.savedFilename}`;
+}
+
 
     const user = new User(req.body);
     const savedUser = await user.save();
