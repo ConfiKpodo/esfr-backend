@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const swaggerUi = require("swagger-ui-express");
 const swaggerSpec = require('./swaggerOption');
 const cors = require("cors"); // ✅ change to require since you're using CommonJS
-
+const path = require("path"); 
 const app = express();
 
 // ✅ Put this FIRST, before anything else
@@ -26,6 +26,11 @@ app.use('/uploads', express.static('uploads'));
 // ✅ Define routes after CORS
 app.use('/api/user', userRoutes);
 app.use('/api/product', productRoutes);
+
+app.use(express.static(path.join(__dirname, 'dist/browser')));
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, 'dist/browser/index.html'));
+});
 
 const mongoDbUrl = process.env.MONGODB_url;
 mongoose.connect(mongoDbUrl)
