@@ -27,7 +27,7 @@ router.get("/location/:location", findProductsByLocation);
 router.get("/user/:id", findProductsByUserId);
 router.get("/category/:category", findProductsByCategory);
 router.get("/:id", getProductById);
-router.put("/updateProduct/:id",upload.single('image'),authenticate, updateProduct);
+router.put("/updateProduct/:id",upload.array('images',5),authenticate, updateProduct);
 router.delete("/deleteProduct/:id", authenticate, deleteProduct);
 router.get("/name/:name", findProductsByName);
 
