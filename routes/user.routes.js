@@ -23,7 +23,7 @@ const router = express.Router();
 router.post("/register",userUpload.single("profileImage"), createUser);
 router.get("/allUsers", getUsers);
 router.get("/:id", authenticate,getUserById);
-router.put("/updateUser/:id",authenticate, updateUser);
+router.put("/updateUser/:id",userUpload.single("profileImage"),authenticate, updateUser);
 router.delete("/delete/:id",authenticate, deleteUser);
 router.post("/login", loginUser);
 router.post("/forgotPassword", forgotPassword);
