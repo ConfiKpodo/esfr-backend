@@ -27,7 +27,9 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api/user', userRoutes);
 app.use('/api/product', productRoutes);
 
-
+app.get(/^(?!\/api).*/, (req, res) => {
+  res.sendFile(path.join(__dirname, "dist/esfr/browser/index.html"));
+});
 
 const mongoDbUrl = process.env.MONGODB_url;
 mongoose.connect(mongoDbUrl)
