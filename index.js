@@ -27,6 +27,7 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api/user', userRoutes);
 app.use('/api/product', productRoutes);
 
+app.use(express.static(path.join(__dirname, "dist/esfr/browser")));
 app.get(/^(?!\/api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, "dist/esfr/browser/index.html"));
 });
