@@ -69,20 +69,21 @@ exports.getUserByUsername = async (req, res) => {
       return res.status(400).json({ message: "Username parameter is required" });
     }
 
-    const user = await User.findOne({
-      username: { $regex: `^${username}$`, $options: "i" }, // case-insensitive exact match
+    const users = await User.find({
+      username: { $regex: username, $options: "i" }  // partial + case-insensitive
     }).select("-password -__v");
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: "No matching users found" });
     }
 
-    res.status(200).json(user);
+    res.status(200).json(users); // now returns ARRAY of matches
   } catch (error) {
     console.error("Error fetching user:", error.message);
     res.status(500).json({ error: "Server error, please try again later" });
   }
 };
+
 
 
 // ✅ Update user by ID
