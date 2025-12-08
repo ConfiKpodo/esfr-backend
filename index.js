@@ -20,13 +20,14 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 const userRoutes = require("./routes/user.routes.js");
 const productRoutes = require("./routes/product.routes.js");
+const transportationRoutes = require("./routes/transportation.routes.js");
 app.use('/uploads', express.static('uploads'));
 
 
 // ✅ Define routes after CORS
 app.use('/api/user', userRoutes);
 app.use('/api/product', productRoutes);
-
+app.use('/api/transportation', transportationRoutes);
 app.use(express.static(path.join(__dirname, "dist/esfr/browser")));
 app.get(/^(?!\/api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, "dist/esfr/browser/index.html"));
