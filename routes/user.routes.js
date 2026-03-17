@@ -1,7 +1,7 @@
 const express = require("express");
 const {authenticate}= require("../middleware/auth.middleware");
 const userUpload = require("../middleware/userUpload");
-
+const { forgotPasswordLimiter } = require("../middleware/rateLimit");
 const {
   createUser,
   getUsers,
@@ -12,6 +12,7 @@ const {
   loginUser,
   forgotPassword,
   resetPasswordWithToken,
+  updateUserRole
   
 } = require("../controller/user.controller");
 
@@ -25,8 +26,10 @@ router.get("/allUsers", getUsers);
 router.get("/:id", authenticate,getUserById);
 router.put("/updateUser/:id",userUpload.single("profileImage"),authenticate, updateUser);
 router.delete("/delete/:id",authenticate, deleteUser);
-router.post("/login", loginUser);
-router.post("/forgotPassword", forgotPassword);
+router.post("/login",forgotPasswordLimiter, loginUser);
+router.patch("/updateRole/:id/role",authenticate, updateUserRole);
+
+router.post("/forgotPassword", forgotPasswordLimiter, forgotPassword);
 router.post("/resetPasswordWithToken/:token", resetPasswordWithToken);
 // search route
 router.get("/username/:username", getUserByUsername);

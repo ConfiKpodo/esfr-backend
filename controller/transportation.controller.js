@@ -24,7 +24,7 @@ exports.createAgent = async (req, res) => {
     res.status(201).json({ message: "Agent created", agent });
   } catch (err) {
     console.error("Create Agent Error:", err.message);
-    res.status(500).json({ error: "Failed to create agent" });
+    res.status(500).json({ error:err.message || "Failed to create agent" });
   }
 };
 
@@ -62,13 +62,17 @@ exports.getAgentById = async (req, res) => {
  */
 exports.searchAgents = async (req, res) => {
   try {
-    const { q } = req.query;
+    const { name } = req.params;
+
+    if (!name) {
+      return res.status(400).json({ message: "Search term required" });
+    }
 
     const agents = await TransportAgent.find({
       $or: [
-        { agentName: { $regex: q, $options: "i" } },
-        { truckType: { $regex: q, $options: "i" } },
-        { location: { $regex: q, $options: "i" } }
+        { agentName: { $regex: name, $options: "i" } },
+        { truckType: { $regex: name, $options: "i" } },
+        { location: { $regex: name, $options: "i" } }
       ]
     });
 
@@ -77,7 +81,6 @@ exports.searchAgents = async (req, res) => {
     res.status(500).json({ error: "Search failed" });
   }
 };
-
 /**
  * Update agent
  */

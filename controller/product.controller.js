@@ -55,16 +55,42 @@ exports.getProductById = async (req, res) => {
 // ✅ Update product
 exports.updateProduct = async (req, res) => {
   try {
-    const updatedData = req.body;
+    const {
+      name,
+      price,
+      description,
+      location,
+      postalCode,
+      condition,
+      category
+    } = req.body;
 
-    // If a new file is uploaded, save the new image path
-    if (req.file) {
-      updatedData.image = `/uploads/images/${req.file.filename}`;
+    let existingImages = req.body.existingImages || [];
+
+    // Ensure array format
+    if (!Array.isArray(existingImages)) {
+      existingImages = [existingImages];
     }
+
+    // New uploaded image paths
+    const newImages = req.files
+      ? req.files.map(file => `/uploads/images/${file.filename}`)
+      : [];
+
+    const updatedData = {
+      name,
+      price,
+      description,
+      location,
+      postalCode,
+      condition,
+      category,
+      images: newImages.length > 0 ? newImages : existingImages,
+    };
 
     const updated = await Product.findByIdAndUpdate(
       req.params.id,
-      updatedData,
+      { $set: updatedData },
       { new: true }
     );
 
@@ -74,9 +100,11 @@ exports.updateProduct = async (req, res) => {
 
     res.status(200).json(updated);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error('UPDATE ERROR:', error);
+    res.status(500).json({ error: error.message });
   }
 };
+
 
 
 // ✅ Delete product

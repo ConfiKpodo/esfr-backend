@@ -10,7 +10,7 @@ const app = express();
 // ✅ Put this FIRST, before anything else
 app.use(cors({
   origin: "http://localhost:4200",
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   credentials: true
 }));
 
@@ -21,6 +21,9 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 const userRoutes = require("./routes/user.routes.js");
 const productRoutes = require("./routes/product.routes.js");
 const transportationRoutes = require("./routes/transportation.routes.js");
+const messageRoutes = require("./routes/messages.route.js");
+const feedbackRoutes = require("./routes/feedback.routes.js");  
+const storageRoutes = require("./routes/storage.routes.js");
 app.use('/uploads', express.static('uploads'));
 
 
@@ -28,10 +31,12 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api/user', userRoutes);
 app.use('/api/product', productRoutes);
 app.use('/api/transportation', transportationRoutes);
-app.use(express.static(path.join(__dirname, "dist/esfr/browser")));
-app.get(/^(?!\/api).*/, (req, res) => {
-  res.sendFile(path.join(__dirname, "dist/esfr/browser/index.html"));
-});
+app.use('/api/messages', messageRoutes);
+app.use('/api/feedback', feedbackRoutes);  
+app.use('/api/storage', storageRoutes);
+
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const mongoDbUrl = process.env.MONGODB_url;
 mongoose.connect(mongoDbUrl)
@@ -39,4 +44,5 @@ mongoose.connect(mongoDbUrl)
   .catch((err) => console.error("MongoDB error:", err));
 
 app.get("/", (req, res) => res.send("Hello!"));
-app.listen(process.env.PORT, () => console.log(`🚀 Server running on port ${process.env.PORT}`));
+app.listen(process.env.PORT,  () => console.log(`🚀 Server running on port ${process.env.PORT}`));
+app.listen(process.env.HOST, () => console.log(`🚀 Server running on host ${process.env.HOST}`));

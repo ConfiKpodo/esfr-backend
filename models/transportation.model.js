@@ -41,7 +41,7 @@ const transportationSchema = new mongoose.Schema(
 
     truckType: {
       type: String,
-      enum: ["small", "medium", "large", "pickup", "trailer"],
+      enum: ["Small", "Medium", "Large", "Pickup", "Trailer"],
       required: true,
     },
   },

@@ -1,6 +1,9 @@
 const express = require("express");
-const router = express.Router();
+const path = require("path");
 const multer = require("multer");
+
+const router = express.Router();
+
 const {
   createAgent,
   getAllAgents,
@@ -9,6 +12,7 @@ const {
   deleteAgent,
   searchAgents,
 } = require("../controller/transportation.controller");
+
 const { authenticate } = require("../middleware/auth.middleware");
 
 /* Multer config for photo uploads */
@@ -17,18 +21,18 @@ const storage = multer.diskStorage({
     cb(null, "uploads/agents");
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname.replace(/\s+/g, "-"));
+    cb(null, Date.now() + path.extname(file.originalname));
   },
 });
 
 const upload = multer({ storage });
 
 /* Routes */
-router.post("/create", upload.single("photo"),authenticate, createAgent);
+router.post("/create", authenticate, upload.single("photo"), createAgent);
 router.get("/agents", getAllAgents);
-router.get("/search", searchAgents);
-router.get("user/:id", getAgentById);
-router.put("/update/:id", upload.single("photo"), updateAgent);
-router.delete("/delete/:id", deleteAgent);
+router.get("/search/:name", searchAgents);
+router.get("/user/:id", getAgentById);
+router.put("/update/:id", authenticate, upload.single("photo"), updateAgent);
+router.delete("/delete/:id", authenticate, deleteAgent);
 
 module.exports = router;
